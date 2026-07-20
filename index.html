@@ -3,75 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite Real Estate AI Receptionist</title>
+    <title>Elite Realty | Powered by Front Desk AI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar for Desktop -->
-        <aside class="sidebar">
-            <div class="logo-container">
-                <i class="fas fa-comments-alt logo-icon"></i>
-                <h2>Elite<span>Realty</span></h2>
-            </div>
-            <nav class="sidebar-nav">
-                <div class="nav-item active"><i class="fas fa-comment-dots"></i> Concierge</div>
-                <div class="nav-item"><i class="fas fa-home"></i> New Listings</div>
-                <div class="nav-item"><i class="fas fa-calendar-check"></i> My Viewings</div>
-            </nav>
-            <div class="sidebar-footer">
-                <p>Premium Real Estate Service 🇳🇬</p>
-            </div>
-        </aside>
+    <!-- Top Branding Bar -->
+    <div class="top-demo-bar">
+        <p>Powered by <span>Front Desk AI</span> (Demo)</p>
+    </div>
 
-        <!-- Main Chat Area -->
-        <main class="chat-wrapper">
-            <header class="chat-header">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">Elite<span>Realty</span></div>
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#properties">Properties</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#" class="btn-contact">Contact Us</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Find Your Dream Home in Nigeria</h1>
+            <p>Experience premium real estate services powered by next-gen AI technology.</p>
+            <div class="search-box">
+                <input type="text" placeholder="Search by location (Lekki, Abuja, Ikeja...)">
+                <button>Search</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Properties -->
+    <section class="properties" id="properties">
+        <div class="container">
+            <div class="section-header">
+                <h2>Featured Listings</h2>
+                <p>Explore our handpicked premium properties across Nigeria.</p>
+            </div>
+            <div class="property-grid">
+                <!-- Property 1 -->
+                <div class="property-card">
+                    <div class="property-img" style="background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80')">
+                        <span class="tag">For Sale</span>
+                    </div>
+                    <div class="property-info">
+                        <h3>5 Bedroom Luxury Duplex</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Lekki Phase 1, Lagos</p>
+                        <div class="specs">
+                            <span><i class="fas fa-bed"></i> 5 Beds</span>
+                            <span><i class="fas fa-bath"></i> 6 Baths</span>
+                        </div>
+                        <div class="price">₦350,000,000</div>
+                    </div>
+                </div>
+                <!-- Property 2 -->
+                <div class="property-card">
+                    <div class="property-img" style="background-image: url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80')">
+                        <span class="tag">Featured</span>
+                    </div>
+                    <div class="property-info">
+                        <h3>4 Bedroom Terrace Flat</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Maitama, Abuja</p>
+                        <div class="specs">
+                            <span><i class="fas fa-bed"></i> 4 Beds</span>
+                            <span><i class="fas fa-bath"></i> 4 Baths</span>
+                        </div>
+                        <div class="price">₦220,000,000</div>
+                    </div>
+                </div>
+                <!-- Property 3 -->
+                <div class="property-card">
+                    <div class="property-img" style="background-image: url('https://images.unsplash.com/photo-1600607687940-477a286beca7?auto=format&fit=crop&w=800&q=80')">
+                        <span class="tag">New</span>
+                    </div>
+                    <div class="property-info">
+                        <h3>Modern 3 Bedroom Apartment</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Ikeja GRA, Lagos</p>
+                        <div class="specs">
+                            <span><i class="fas fa-bed"></i> 3 Beds</span>
+                            <span><i class="fas fa-bath"></i> 3 Baths</span>
+                        </div>
+                        <div class="price">₦85,000,000</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Floating Chat Widget -->
+    <div class="chat-widget" id="chatWidget">
+        <button class="chat-toggle" id="chatToggle">
+            <i class="fas fa-comments"></i>
+            <span>Chat with Concierge</span>
+        </button>
+        
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <div class="bot-avatar"><i class="fas fa-user-tie"></i></div>
                 <div class="bot-info">
-                    <div class="bot-avatar">
-                        <!-- Custom Icon from your image -->
-                        <i class="fas fa-comments"></i> 
-                        <span class="status-indicator"></span>
-                    </div>
-                    <div class="bot-details">
-                        <h3>AI Concierge</h3>
-                        <p>Professional Assistant | Online</p>
-                    </div>
+                    <h4>AI Concierge</h4>
+                    <p>Powered by Front Desk AI</p>
                 </div>
-                <div class="header-actions">
-                    <button class="icon-btn"><i class="fas fa-phone"></i></button>
-                </div>
-            </header>
-
+                <button class="close-chat" id="closeChat">&times;</button>
+            </div>
             <div class="chat-messages" id="chatMessages">
                 <div class="message ai-message">
-                    <div class="msg-bubble">
-                        E k'asan! Welcome to Elite Realty. I am your professional AI Receptionist. 
-                        How can I assist you with your property search in Nigeria today?
-                    </div>
-                    <span class="msg-time">Just now</span>
+                    <div class="msg-bubble">Welcome to Elite Realty! I'm your AI Concierge. How can I help you find your dream property in Nigeria today?</div>
                 </div>
             </div>
-
             <div class="typing-indicator" id="typingIndicator" style="display: none;">
                 <span></span><span></span><span></span>
             </div>
-
-            <footer class="chat-input-area">
-                <div class="input-container">
-                    <input type="text" id="userInput" placeholder="Ask about properties in Nigeria..." autocomplete="off">
-                    <button id="sendButton" class="send-btn">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
-                <!-- Your branding request -->
-                <div class="powered-by">
-                    Powered by <span>Front Desk AI</span>
-                </div>
-            </footer>
-        </main>
+            <div class="chat-input-area">
+                <input type="text" id="userInput" placeholder="Ask about properties..." autocomplete="off">
+                <button id="sendButton"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
