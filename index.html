@@ -1,911 +1,391 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Front Desk AI · Real Estate Assistant</title>
-
-    <!-- Google Fonts + Font Awesome -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-
-    <style>
-        /* ---------- Reset & Base ---------- */
-        *,
-        *::before,
-        *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #0a1a2f;
-            --primary-light: #132a44;
-            --accent: #d4a34b;
-            --accent-light: #e8c47a;
-            --bg: #f4f6fa;
-            --card-bg: #ffffff;
-            --text: #1e293b;
-            --text-light: #64748b;
-            --shadow: 0 12px 40px rgba(10, 26, 47, 0.10);
-            --radius: 20px;
-            --radius-sm: 12px;
-            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        html,
-        body {
-            height: 100%;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-        }
-
-        /* ---------- Chat Container ---------- */
-        .chat-wrapper {
-            width: 100%;
-            max-width: 780px;
-            height: 92vh;
-            max-height: 820px;
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* ---------- Header ---------- */
-        .chat-header {
-            background: var(--primary);
-            padding: 18px 28px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-shrink: 0;
-            border-bottom: 2px solid var(--accent);
-        }
-
-        .chat-header .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .chat-header .brand .icon {
-            width: 40px;
-            height: 40px;
-            background: var(--accent);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            color: var(--primary);
-        }
-
-        .chat-header .brand h1 {
-            font-size: 20px;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: -0.3px;
-        }
-
-        .chat-header .brand h1 span {
-            color: var(--accent);
-        }
-
-        .chat-header .status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .chat-header .status .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #4ade80;
-            animation: pulse-dot 2s infinite;
-        }
-
-        @keyframes pulse-dot {
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.5;
-                transform: scale(0.85);
-            }
-        }
-
-        /* ---------- Messages Area ---------- */
-        .messages-area {
-            flex: 1;
-            overflow-y: auto;
-            padding: 24px 28px 12px 28px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            scroll-behavior: smooth;
-            background: #fafcff;
-        }
-
-        .messages-area::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        .messages-area::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .messages-area::-webkit-scrollbar-thumb {
-            background: #d1d9e6;
-            border-radius: 10px;
-        }
-
-        /* ---------- Message Bubbles ---------- */
-        .message {
-            display: flex;
-            gap: 10px;
-            max-width: 85%;
-            animation: fade-up 0.35s ease;
-        }
-
-        @keyframes fade-up {
-            from {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .message.user {
-            align-self: flex-end;
-            flex-direction: row-reverse;
-        }
-
-        .message .avatar {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: 600;
-            color: #fff;
-        }
-
-        .message.bot .avatar {
-            background: var(--primary);
-        }
-
-        .message.user .avatar {
-            background: var(--accent);
-            color: var(--primary);
-        }
-
-        .message .bubble {
-            padding: 14px 18px;
-            border-radius: var(--radius-sm);
-            font-size: 14.5px;
-            line-height: 1.6;
-            word-break: break-word;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-        }
-
-        .message.bot .bubble {
-            background: #eef2f7;
-            color: var(--text);
-            border-bottom-left-radius: 4px;
-        }
-
-        .message.user .bubble {
-            background: var(--primary);
-            color: #fff;
-            border-bottom-right-radius: 4px;
-        }
-
-        .message .bubble p {
-            margin-bottom: 6px;
-        }
-
-        .message .bubble p:last-child {
-            margin-bottom: 0;
-        }
-
-        .message .bubble .property-card {
-            background: #fff;
-            border-radius: 10px;
-            padding: 14px 16px;
-            margin-top: 10px;
-            border-left: 4px solid var(--accent);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        }
-
-        .message .bubble .property-card h4 {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .message .bubble .property-card .meta {
-            font-size: 13px;
-            color: var(--text-light);
-            margin-top: 4px;
-        }
-
-        .message .bubble .property-card .price {
-            font-weight: 700;
-            color: var(--accent);
-            font-size: 16px;
-        }
-
-        .message .bubble .quick-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .message .bubble .quick-actions button {
-            background: var(--primary);
-            color: #fff;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .message .bubble .quick-actions button:hover {
-            background: var(--primary-light);
-            transform: scale(1.02);
-        }
-
-        .message .bubble .quick-actions button.outline {
-            background: transparent;
-            color: var(--primary);
-            border: 1.5px solid var(--primary);
-        }
-
-        .message .bubble .quick-actions button.outline:hover {
-            background: var(--primary);
-            color: #fff;
-        }
-
-        /* ---------- Typing Indicator ---------- */
-        .typing-indicator {
-            display: none;
-            align-self: flex-start;
-            gap: 10px;
-            padding: 8px 0;
-        }
-
-        .typing-indicator.show {
-            display: flex;
-        }
-
-        .typing-indicator .dots {
-            display: flex;
-            gap: 5px;
-            background: #eef2f7;
-            padding: 12px 18px;
-            border-radius: var(--radius-sm);
-            border-bottom-left-radius: 4px;
-        }
-
-        .typing-indicator .dots span {
-            width: 8px;
-            height: 8px;
-            background: #94a3b8;
-            border-radius: 50%;
-            animation: typing-bounce 1.4s infinite both;
-        }
-
-        .typing-indicator .dots span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-        .typing-indicator .dots span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typing-bounce {
-            0%,
-            80%,
-            100% {
-                transform: scale(0.6);
-                opacity: 0.4;
-            }
-            40% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        /* ---------- Input Area ---------- */
-        .chat-input {
-            padding: 16px 24px 20px 24px;
-            background: #fff;
-            border-top: 1px solid #e9edf4;
-            display: flex;
-            gap: 12px;
-            align-items: flex-end;
-            flex-shrink: 0;
-        }
-
-        .chat-input .input-wrap {
-            flex: 1;
-            background: #f1f4fa;
-            border-radius: 30px;
-            padding: 4px 4px 4px 20px;
-            display: flex;
-            align-items: flex-end;
-            gap: 8px;
-            border: 2px solid transparent;
-            transition: var(--transition);
-        }
-
-        .chat-input .input-wrap:focus-within {
-            border-color: var(--accent);
-            background: #fff;
-        }
-
-        .chat-input .input-wrap textarea {
-            flex: 1;
-            border: none;
-            background: transparent;
-            padding: 12px 0;
-            font-size: 14px;
-            font-family: inherit;
-            resize: none;
-            outline: none;
-            min-height: 22px;
-            max-height: 120px;
-            line-height: 1.5;
-            color: var(--text);
-        }
-
-        .chat-input .input-wrap textarea::placeholder {
-            color: #94a3b8;
-        }
-
-        .chat-input .input-wrap .send-btn {
-            background: var(--primary);
-            color: #fff;
-            border: none;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            font-size: 18px;
-            cursor: pointer;
-            transition: var(--transition);
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .chat-input .input-wrap .send-btn:hover {
-            background: var(--accent);
-            transform: scale(1.04);
-        }
-
-        .chat-input .input-wrap .send-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* ---------- Footer ---------- */
-        .chat-footer {
-            text-align: center;
-            padding: 10px 0 14px 0;
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--text-light);
-            border-top: 1px solid #eef2f7;
-            background: #fff;
-            flex-shrink: 0;
-            letter-spacing: 0.3px;
-        }
-
-        .chat-footer a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .chat-footer a:hover {
-            color: var(--accent);
-        }
-
-        .chat-footer .powered {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .chat-footer .powered i {
-            color: var(--accent);
-            font-size: 13px;
-        }
-
-        /* ---------- Responsive ---------- */
-        @media (max-width: 640px) {
-            .chat-wrapper {
-                height: 100vh;
-                max-height: none;
-                border-radius: 0;
-                padding: 0;
-            }
-
-            .chat-header {
-                padding: 14px 18px;
-            }
-
-            .chat-header .brand h1 {
-                font-size: 17px;
-            }
-
-            .messages-area {
-                padding: 16px 16px 8px 16px;
-            }
-
-            .message {
-                max-width: 92%;
-            }
-
-            .chat-input {
-                padding: 12px 14px 16px 14px;
-            }
-
-            .chat-input .input-wrap {
-                padding-left: 14px;
-            }
-
-            .chat-footer {
-                padding: 8px 0 12px 0;
-                font-size: 11px;
-            }
-        }
-
-        @media (max-width: 400px) {
-            .chat-header .brand .icon {
-                width: 32px;
-                height: 32px;
-                font-size: 16px;
-            }
-            .chat-header .brand h1 {
-                font-size: 15px;
-            }
-            .message .bubble {
-                font-size: 13.5px;
-                padding: 12px 14px;
-            }
-        }
-
-        /* ---------- Utility ---------- */
-        .hidden {
-            display: none !important;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .mt-1 {
-            margin-top: 6px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Front Desk AI — Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14201B;
+    --paper:#F6F2EA;
+    --brass:#B8862F;
+    --brass-soft:#DCC38A;
+    --green:#1F4D3A;
+    --line: rgba(20,32,27,0.12);
+    --radius: 14px;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; }
+  }
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:22px 6vw;
+    border-bottom:1px solid var(--line);
+  }
+  .brand{
+    font-family:'Fraunces', serif;
+    font-size:19px;
+    font-weight:600;
+    letter-spacing:0.01em;
+  }
+  .brand span{ color:var(--brass); }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--green);
+    opacity:0.75;
+    border:1px solid var(--line);
+    padding:6px 12px;
+    border-radius:100px;
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    max-width:1180px;
+    margin:0 auto;
+    padding:9vh 6vw 4vh;
+    display:grid;
+    grid-template-columns:1.05fr 1fr;
+    gap:64px;
+    align-items:center;
+  }
+  .hero h1{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:clamp(34px, 4.6vw, 58px);
+    line-height:1.06;
+    margin:0 0 22px;
+    letter-spacing:-0.01em;
+  }
+  .hero h1 em{
+    font-style:italic;
+    color:var(--green);
+  }
+  .hero p{
+    font-size:17px;
+    line-height:1.6;
+    color:rgba(20,32,27,0.72);
+    max-width:46ch;
+    margin:0 0 30px;
+  }
+  .stat-row{
+    display:flex;
+    gap:32px;
+    padding-top:22px;
+    border-top:1px solid var(--line);
+  }
+  .stat{ font-family:'IBM Plex Mono', monospace; }
+  .stat b{
+    display:block;
+    font-size:22px;
+    color:var(--ink);
+  }
+  .stat span{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:rgba(20,32,27,0.55);
+  }
+
+  /* ---------- chat widget ---------- */
+  .widget{
+    background:var(--ink);
+    border-radius:22px;
+    padding:22px;
+    box-shadow: 0 30px 60px -20px rgba(20,32,27,0.35);
+    display:flex;
+    flex-direction:column;
+    height:560px;
+  }
+  .widget-head{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:4px 6px 16px;
+    border-bottom:1px solid rgba(246,242,234,0.12);
+    margin-bottom:14px;
+  }
+  .dot{
+    width:9px; height:9px; border-radius:50%;
+    background:#4CAF7D;
+    box-shadow:0 0 0 3px rgba(76,175,125,0.18);
+  }
+  .widget-head-text b{
+    color:var(--paper);
+    font-size:14px;
+    display:block;
+    font-family:'Inter';
+  }
+  .widget-head-text span{
+    color:rgba(246,242,234,0.5);
+    font-size:12px;
+  }
+
+  .messages{
+    flex:1;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    padding:4px 2px;
+  }
+  .messages::-webkit-scrollbar{ width:5px; }
+  .messages::-webkit-scrollbar-thumb{ background:rgba(246,242,234,0.15); border-radius:10px; }
+
+  .msg{
+    max-width:82%;
+    font-size:14px;
+    line-height:1.5;
+    white-space:pre-wrap;
+    animation: rise 0.28s ease both;
+  }
+  @keyframes rise{
+    from{ opacity:0; transform:translateY(6px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .msg.user{
+    align-self:flex-end;
+    background:rgba(246,242,234,0.1);
+    color:var(--paper);
+    padding:11px 14px;
+    border-radius:14px 14px 4px 14px;
+  }
+
+  /* bot messages styled like a property key-tag */
+  .msg.bot{
+    align-self:flex-start;
+    position:relative;
+    background:var(--paper);
+    color:var(--ink);
+    padding:12px 16px 12px 22px;
+    border-radius:4px 12px 12px 4px;
+  }
+  .msg.bot::before{
+    content:"";
+    position:absolute;
+    left:8px; top:50%;
+    transform:translateY(-50%);
+    width:6px; height:6px;
+    border-radius:50%;
+    background:var(--ink);
+    box-shadow: 0 -9px 0 -3px rgba(20,32,27,0.25), 0 9px 0 -3px rgba(20,32,27,0.25);
+  }
+  .msg.bot::after{
+    content:"";
+    position:absolute;
+    left:-5px; top:50%;
+    transform:translateY(-50%);
+    width:10px; height:10px;
+    background:var(--ink);
+    border-radius:50%;
+  }
+
+  .typing{
+    align-self:flex-start;
+    display:flex;
+    gap:4px;
+    padding:12px 16px;
+  }
+  .typing span{
+    width:6px; height:6px; border-radius:50%;
+    background:rgba(246,242,234,0.5);
+    animation: bounce 1.1s infinite ease-in-out;
+  }
+  .typing span:nth-child(2){ animation-delay:0.15s; }
+  .typing span:nth-child(3){ animation-delay:0.3s; }
+  @keyframes bounce{
+    0%,60%,100%{ transform:translateY(0); opacity:0.4; }
+    30%{ transform:translateY(-4px); opacity:1; }
+  }
+
+  .composer{
+    display:flex;
+    gap:8px;
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px solid rgba(246,242,234,0.12);
+  }
+  .composer input{
+    flex:1;
+    background:rgba(246,242,234,0.08);
+    border:1px solid rgba(246,242,234,0.14);
+    border-radius:10px;
+    padding:12px 14px;
+    color:var(--paper);
+    font-family:'Inter';
+    font-size:14px;
+    outline:none;
+  }
+  .composer input::placeholder{ color:rgba(246,242,234,0.4); }
+  .composer input:focus{ border-color:var(--brass); }
+  .composer button{
+    background:var(--brass);
+    color:var(--ink);
+    border:none;
+    border-radius:10px;
+    padding:0 18px;
+    font-family:'Inter';
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+    transition:background 0.15s ease;
+  }
+  .composer button:hover{ background:var(--brass-soft); }
+  .composer button:focus-visible, .composer input:focus-visible{
+    outline:2px solid var(--brass);
+    outline-offset:2px;
+  }
+  .composer button:disabled{ opacity:0.5; cursor:not-allowed; }
+
+  .widget-foot{
+    text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:rgba(20,32,27,0.45);
+    margin-top:16px;
+  }
+  .widget-foot b{ color:var(--brass); font-weight:500; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 880px){
+    .hero{ grid-template-columns:1fr; padding-top:6vh; gap:40px; }
+    .widget{ height:500px; }
+  }
+</style>
 </head>
 <body>
 
-    <div class="chat-wrapper" id="app">
+  <div class="topbar">
+    <div class="brand">Front Desk <span>AI</span></div>
+    <div class="eyebrow">Powered by Front Desk AI — Demo</div>
+  </div>
 
-        <!-- Header -->
-        <header class="chat-header">
-            <div class="brand">
-                <div class="icon"><i class="fas fa-building"></i></div>
-                <h1>Front Desk <span>AI</span></h1>
-            </div>
-            <div class="status">
-                <span class="dot"></span>
-                <span>Online</span>
-            </div>
-        </header>
-
-        <!-- Messages -->
-        <div class="messages-area" id="messagesArea">
-            <!-- Messages will be injected here -->
-            <div class="message bot">
-                <div class="avatar"><i class="fas fa-robot"></i></div>
-                <div class="bubble">
-                    <p>👋 Welcome to <strong>Front Desk AI</strong> — your smart real estate assistant.</p>
-                    <p style="margin-top:6px; font-size:13.5px; color:var(--text-light);">
-                        I can help you find properties, book viewings, and connect with our agents.<br />
-                        <strong>Try saying:</strong> <em>"Show me 3-bedroom flats in Lagos"</em>
-                    </p>
-                    <div class="quick-actions">
-                        <button onclick="sendQuick('I want to view properties')">🔍 View Properties</button>
-                        <button onclick="sendQuick('I want to book a viewing')">📅 Book Viewing</button>
-                        <button onclick="sendQuick('Contact an agent')">📞 Contact Agent</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Typing indicator -->
-            <div class="typing-indicator" id="typingIndicator">
-                <div class="avatar" style="background:var(--primary); width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;">
-                    <i class="fas fa-robot"></i>
-                </div>
-                <div class="dots">
-                    <span></span><span></span><span></span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Input -->
-        <div class="chat-input">
-            <div class="input-wrap">
-                <textarea id="messageInput" rows="1" placeholder="Type your message…" aria-label="Chat message"></textarea>
-                <button class="send-btn" id="sendBtn" aria-label="Send message">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <footer class="chat-footer">
-            <div class="powered">
-                <i class="fas fa-robot"></i>
-                <span>Powered by <a href="#" target="_blank">Front Desk AI</a> · Real Estate Intelligence</span>
-            </div>
-        </footer>
+  <main class="hero">
+    <div>
+      <h1>Your listings,<br><em>answering themselves.</em></h1>
+      <p>Front Desk AI qualifies buyers, matches properties, and books viewings the moment a lead lands — day or night. Try it below with a real search, the way a customer would.</p>
+      <div class="stat-row">
+        <div class="stat"><b>24/7</b><span>Always answering</span></div>
+        <div class="stat"><b>0</b><span>Repeated questions</span></div>
+        <div class="stat"><b>3-day</b><span>Auto follow-up</span></div>
+      </div>
     </div>
 
-    <script>
-        // ============================================================
-        //  CONFIGURATION — REPLACE WITH YOUR APPS SCRIPT URL
-        // ============================================================
-        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyKxHZpfUmo1qlshnpGObvKW3rNFRE2LGUXxM7Bg85weaXH6bd7zbPFjOlofIWlIBMS/exec';
+    <div class="widget">
+      <div class="widget-head">
+        <span class="dot"></span>
+        <div class="widget-head-text">
+          <b>Front Desk AI</b>
+          <span>Typically replies in seconds</span>
+        </div>
+      </div>
 
-        // ============================================================
-        //  STATE
-        // ============================================================
-        let userId = localStorage.getItem('fdai_userId');
-        if (!userId) {
-            userId = 'user_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
-            localStorage.setItem('fdai_userId', userId);
-        }
+      <div class="messages" id="messages">
+        <div class="msg bot">Welcome — I can help you find a property, book a viewing, or answer any question about our listings. What are you looking for today?</div>
+      </div>
 
-        let isProcessing = false;
+      <div class="composer">
+        <input id="input" type="text" placeholder="e.g. 3 bedroom flat in Lekki under ₦100m" autocomplete="off">
+        <button id="send">Send</button>
+      </div>
 
-        // DOM refs
-        const messagesArea = document.getElementById('messagesArea');
-        const messageInput = document.getElementById('messageInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const typingIndicator = document.getElementById('typingIndicator');
+      <div class="widget-foot">Powered by <b>Front Desk AI</b></div>
+    </div>
+  </main>
 
-        // ============================================================
-        //  HELPERS
-        // ============================================================
-        function scrollToBottom() {
-            requestAnimationFrame(() => {
-                messagesArea.scrollTop = messagesArea.scrollHeight;
-            });
-        }
+<script>
+  // ⚠️ REQUIRED: paste your deployed Apps Script Web App URL here
+  const API_URL = "https://script.google.com/macros/s/AKfycbyKxHZpfUmo1qlshnpGObvKW3rNFRE2LGUXxM7Bg85weaXH6bd7zbPFjOlofIWlIBMS/exec";
 
-        function formatTime() {
-            return new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-        }
+  const userId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random());
 
-        // ============================================================
-        //  RENDER MESSAGE
-        // ============================================================
-        function addMessage(role, content, extra = '') {
-            const div = document.createElement('div');
-            div.className = `message ${role}`;
+  const messagesEl = document.getElementById('messages');
+  const inputEl = document.getElementById('input');
+  const sendBtn = document.getElementById('send');
 
-            const avatar = document.createElement('div');
-            avatar.className = 'avatar';
-            if (role === 'bot') {
-                avatar.innerHTML = '<i class="fas fa-robot"></i>';
-            } else {
-                avatar.innerHTML = '<i class="fas fa-user"></i>';
-            }
+  function addMessage(text, sender){
+    const div = document.createElement('div');
+    div.className = 'msg ' + sender;
+    div.textContent = text;
+    messagesEl.appendChild(div);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
 
-            const bubble = document.createElement('div');
-            bubble.className = 'bubble';
+  function showTyping(){
+    const div = document.createElement('div');
+    div.className = 'typing';
+    div.id = 'typing-indicator';
+    div.innerHTML = '<span></span><span></span><span></span>';
+    messagesEl.appendChild(div);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
 
-            // Parse content — if it contains property cards or quick actions, render them
-            let html = content;
+  function hideTyping(){
+    const el = document.getElementById('typing-indicator');
+    if(el) el.remove();
+  }
 
-            // Check for property listings (simple heuristic)
-            if (role === 'bot' && content.includes('₦') && content.includes('bedroom')) {
-                // Wrap property listings in a styled card
-                const lines = content.split('\n');
-                let newLines = [];
-                let inList = false;
-                for (let line of lines) {
-                    if (line.trim().startsWith('-') || line.trim().startsWith('•')) {
-                        if (!inList) {
-                            newLines.push('<div class="property-card">');
-                            inList = true;
-                        }
-                        // Clean up the bullet
-                        const clean = line.replace(/^[-\•]\s*/, '').trim();
-                        // Split by price
-                        const parts = clean.split('(₦');
-                        if (parts.length > 1) {
-                            const title = parts[0].trim();
-                            const price = '₦' + parts[1].replace(/\)$/, '').trim();
-                            newLines.push(
-                                `<h4>${title}</h4><div class="meta">${price}</div>`
-                            );
-                        } else {
-                            newLines.push(`<div>${clean}</div>`);
-                        }
-                    } else {
-                        if (inList) {
-                            newLines.push('</div>');
-                            inList = false;
-                        }
-                        newLines.push(line);
-                    }
-                }
-                if (inList) newLines.push('</div>');
-                html = newLines.join('\n');
-            }
+  async function sendMessage(){
+    const text = inputEl.value.trim();
+    if(!text) return;
 
-            // Convert newlines to <br> for non-list content
-            if (!html.includes('<div') && !html.includes('<h4')) {
-                html = html.replace(/\n/g, '<br />');
-            }
+    if(API_URL.indexOf('PASTE_YOUR') === 0){
+      addMessage('Demo not connected yet — paste your Apps Script Web App URL into API_URL in this file.', 'bot');
+      return;
+    }
 
-            bubble.innerHTML = html;
+    addMessage(text, 'user');
+    inputEl.value = '';
+    sendBtn.disabled = true;
+    showTyping();
 
-            // If extra content (like quick actions) is provided
-            if (extra) {
-                const extraDiv = document.createElement('div');
-                extraDiv.innerHTML = extra;
-                bubble.appendChild(extraDiv);
-            }
+    try{
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ userId: userId, message: text })
+      });
+      const data = await res.json();
+      hideTyping();
+      addMessage(data.response || "Sorry, I didn't catch that — could you try again?", 'bot');
+    }catch(err){
+      hideTyping();
+      addMessage("I'm having trouble connecting right now. Please try again in a moment.", 'bot');
+    }finally{
+      sendBtn.disabled = false;
+      inputEl.focus();
+    }
+  }
 
-            div.appendChild(avatar);
-            div.appendChild(bubble);
-
-            // Remove typing indicator if present
-            const typing = document.getElementById('typingIndicator');
-            if (typing) {
-                messagesArea.insertBefore(div, typing);
-            } else {
-                messagesArea.appendChild(div);
-            }
-
-            scrollToBottom();
-        }
-
-        // ============================================================
-        //  SEND MESSAGE TO BACKEND
-        // ============================================================
-        async function sendMessage(text) {
-            if (isProcessing) return;
-            if (!text || text.trim() === '') return;
-
-            const trimmed = text.trim();
-
-            // Add user message to UI
-            addMessage('user', trimmed);
-            messageInput.value = '';
-            messageInput.style.height = 'auto';
-            isProcessing = true;
-            sendBtn.disabled = true;
-
-            // Show typing indicator
-            typingIndicator.classList.add('show');
-            scrollToBottom();
-
-            try {
-                const payload = {
-                    userId: userId,
-                    message: trimmed,
-                    timestamp: new Date().toISOString()
-                };
-
-                const response = await fetch(APP_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors', // required for Apps Script
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(payload),
-                });
-
-                // Because of no-cors, we can't read the response directly.
-                // We need to use a different approach: the Apps Script must return
-                // text/plain or we use a proxy. Since we use no-cors, we can't
-                // read the response body. Let's use a different strategy.
-
-                // Actually, with no-cors we can't read the response at all.
-                // The standard approach is to use a form POST or JSONP.
-                // But since we want to use JSON, let's use a workaround:
-                // We'll use a hidden iframe or fetch with mode: 'cors' if the
-                // Apps Script is deployed with proper CORS headers.
-
-                // The user's Apps Script doPost returns ContentService with JSON.
-                // To read it, we need to use mode: 'cors' (or omit mode).
-                // But Apps Script doesn't support CORS headers by default.
-                // So we need to use a different approach: use a proxy or use
-                // JSONP with callback.
-
-                // For simplicity, let's use a standard fetch with 'cors' and
-                // handle the response. The user will need to deploy the Apps
-                // Script with CORS enabled (which is the default for web apps).
-
-                // Let's re-fetch with proper mode.
-                // Since we already used no-cors above, let's do a proper fetch now.
-                // Actually, we can't change mode after the fact. Let's restructure.
-
-                // We'll use a proper fetch with mode: 'cors' (default) and handle
-                // the response. But this requires the Apps Script to support CORS.
-                // The user's doPost function returns ContentService with JSON,
-                // which should work.
-
-                // Let's redo the fetch properly.
-                const response2 = await fetch(APP_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(payload),
-                });
-
-                if (!response2.ok) {
-                    throw new Error(`HTTP ${response2.status}`);
-                }
-
-                const data = await response2.json();
-                typingIndicator.classList.remove('show');
-
-                // Handle the response
-                let reply = data.response || 'I received your message. How can I assist you further?';
-                let extra = '';
-
-                // If there are property results, add quick actions
-                if (reply.includes('₦') && reply.toLowerCase().includes('bedroom')) {
-                    extra = `
-                        <div class="quick-actions" style="margin-top:10px;">
-                            <button onclick="sendQuick('I want to book a viewing')">📅 Book Viewing</button>
-                            <button onclick="sendQuick('Show more properties')">🔍 More Properties</button>
-                        </div>
-                    `;
-                }
-
-                // If the response asks for lead info, add quick actions
-                if (reply.toLowerCase().includes('name') || reply.toLowerCase().includes('phone') || reply.toLowerCase()
-                    .includes('email')) {
-                    extra = `
-                        <div class="quick-actions" style="margin-top:10px;">
-                            <button onclick="sendQuick('My name is')">📝 Provide Info</button>
-                            <button onclick="sendQuick('I\'ll call later')">📞 Call Later</button>
-                        </div>
-                    `;
-                }
-
-                addMessage('bot', reply, extra);
-
-            } catch (err) {
-                typingIndicator.classList.remove('show');
-                console.error('Chat error:', err);
-                addMessage('bot', '⚠️ Sorry, I\'m having trouble connecting. Please try again in a moment.');
-            } finally {
-                isProcessing = false;
-                sendBtn.disabled = false;
-                scrollToBottom();
-            }
-        }
-
-        // ============================================================
-        //  QUICK ACTION HELPER
-        // ============================================================
-        function sendQuick(text) {
-            messageInput.value = text;
-            sendMessage(text);
-        }
-
-        // Expose to global scope for inline onclick
-        window.sendQuick = sendQuick;
-
-        // ============================================================
-        //  EVENT BINDINGS
-        // ============================================================
-        sendBtn.addEventListener('click', () => {
-            const text = messageInput.value.trim();
-            if (text) sendMessage(text);
-        });
-
-        messageInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                const text = messageInput.value.trim();
-                if (text) sendMessage(text);
-            }
-        });
-
-        // Auto-resize textarea
-        messageInput.addEventListener('input', () => {
-            messageInput.style.height = 'auto';
-            messageInput.style.height = Math.min(messageInput.scrollHeight, 120) + 'px';
-        });
-
-        // Focus input on load
-        setTimeout(() => messageInput.focus(), 400);
-
-        // ============================================================
-        //  CHECK CONNECTION ON LOAD
-        // ============================================================
-        async function checkConnection() {
-            try {
-                const res = await fetch(APP_SCRIPT_URL, {
-                    method: 'GET',
-                    headers: { 'Accept': 'application/json' },
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    console.log('✅ Backend online:', data);
-                } else {
-                    console.warn('⚠️ Backend responded with status:', res.status);
-                }
-            } catch (err) {
-                console.warn('⚠️ Backend connection check failed:', err.message);
-                // Don't show error to user — they'll see it when they send a message
-            }
-        }
-
-        // Check connection after a short delay
-        setTimeout(checkConnection, 1000);
-
-        // ============================================================
-        //  SEND INITIAL GREETING (if first visit)
-        // ============================================================
-        const hasVisited = localStorage.getItem('fdai_visited');
-        if (!hasVisited) {
-            localStorage.setItem('fdai_visited', 'true');
-            // The greeting is already in the DOM from the static HTML
-            // But we could also send a welcome message from the backend
-            // For now, we keep the static greeting.
-        }
-
-        // ============================================================
-        //  POLISH: add timestamp to messages (optional)
-        // ============================================================
-        // We could add timestamps, but keeping it clean for now.
-
-        console.log('🏠 Front Desk AI · User ID:', userId);
-        console.log('📡 App Script URL:', APP_SCRIPT_URL);
-    </script>
+  sendBtn.addEventListener('click', sendMessage);
+  inputEl.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') sendMessage();
+  });
+</script>
 
 </body>
-    </htmlhtml
+</html>
