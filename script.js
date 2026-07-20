@@ -1,12 +1,21 @@
-const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwFOtWaj40J09R3XQJ_HqM4Ockz3gL1sSMa-E4pZZ7F1K4crtJ5HrzSQQTBgMtGgoSA/exec';
+const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwFOtWaj40J09R3XQJ_HqM4Ockz3gL1sSMa-E4pZZ7F1K4crtJ5HrzSQQTBgMtGgoSA/exec'; // <--- PASTE YOUR URL HERE
 let sessionId = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     startNewSession();
+    
+    // UI Toggles
+    const toggle = document.getElementById('chatToggle');
+    const close = document.getElementById('closeChat');
+    const window = document.getElementById('chatWindow');
     const sendBtn = document.getElementById('sendButton');
     const input = document.getElementById('userInput');
-    sendBtn.addEventListener('click', handleSend);
-    input.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
+
+    toggle.onclick = () => window.style.display = 'flex';
+    close.onclick = () => window.style.display = 'none';
+
+    sendBtn.onclick = handleSend;
+    input.onkeypress = (e) => { if (e.key === 'Enter') handleSend(); };
 });
 
 async function startNewSession() {
@@ -14,37 +23,39 @@ async function startNewSession() {
         const response = await fetch(API_ENDPOINT, { method: 'POST', body: JSON.stringify({ action: 'startSession' }) });
         const result = await response.json();
         if (result.success) sessionId = result.data.sessionId;
-    } catch (error) { console.error('Session Error:', error); }
+    } catch (e) { console.log('Init error:', e); }
 }
 
 async function handleSend() {
     const input = document.getElementById('userInput');
-    const message = input.value.trim();
-    if (!message) return;
-    addMessage(message, 'user');
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    addMessage(msg, 'user');
     input.value = '';
-    const indicator = document.getElementById('typingIndicator');
-    indicator.style.display = 'flex';
+    document.getElementById('typingIndicator').style.display = 'flex';
     scrollToBottom();
+
     try {
-        const response = await fetch(API_ENDPOINT, { method: 'POST', body: JSON.stringify({ action: 'sendMessage', sessionId: sessionId, message: message }) });
-        const result = await response.json();
-        indicator.style.display = 'none';
-        if (result.success) { addMessage(result.data.reply, 'ai'); } 
-        else { addMessage("Error connecting. Try again later.", 'ai'); }
-    } catch (error) {
-        indicator.style.display = 'none';
-        addMessage("Connection error.", 'ai');
+        const resp = await fetch(API_ENDPOINT, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'sendMessage', sessionId: sessionId, message: msg })
+        });
+        const res = await resp.json();
+        document.getElementById('typingIndicator').style.display = 'none';
+        if (res.success) addMessage(res.data.reply, 'ai');
+    } catch (e) {
+        document.getElementById('typingIndicator').style.display = 'none';
+        addMessage("Connection error. Check your deployment.", "ai");
     }
 }
 
 function addMessage(text, sender) {
     const chat = document.getElementById('chatMessages');
-    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const msgDiv = document.createElement('div');
-    msgDiv.className = `message ${sender}-message`;
-    msgDiv.innerHTML = `<div class="msg-bubble">${text.replace(/\n/g, '<br>')}</div><span class="msg-time">${time}</span>`;
-    chat.appendChild(msgDiv);
+    const div = document.createElement('div');
+    div.className = `message ${sender}-message`;
+    div.innerHTML = `<div class="msg-bubble">${text.replace(/\n/g, '<br>')}</div>`;
+    chat.appendChild(div);
     scrollToBottom();
 }
 
