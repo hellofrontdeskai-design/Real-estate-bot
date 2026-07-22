@@ -1,386 +1,286 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Front Desk AI — Demo</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Front Desk AI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --ink:#14201B;
-    --paper:#F6F2EA;
-    --brass:#B8862F;
-    --brass-soft:#DCC38A;
-    --green:#1F4D3A;
-    --line: rgba(20,32,27,0.12);
-    --radius: 14px;
+  :root {
+    --ink: #14213D;
+    --brass: #B08D57;
+    --brass-dark: #93733F;
+    --paper: #FAF7F2;
+    --slate: #6B7280;
+    --available: #3E7C59;
+    --line: #E6E1D8;
   }
 
-  *{ box-sizing:border-box; }
-  html{ scroll-behavior:smooth; }
+  * { box-sizing: border-box; }
 
-  body{
-    margin:0;
-    background:var(--paper);
-    color:var(--ink);
-    font-family:'Inter', sans-serif;
-    -webkit-font-smoothing:antialiased;
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #EDEAE2;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
   }
 
-  .topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:22px 6vw;
-    border-bottom:1px solid var(--line);
-  }
-  .brand{
-    font-family:'Fraunces', serif;
-    font-size:19px;
-    font-weight:600;
-    letter-spacing:0.01em;
-  }
-  .brand span{ color:var(--brass); }
-  .eyebrow{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:11px;
-    letter-spacing:0.12em;
-    text-transform:uppercase;
-    color:var(--green);
-    opacity:0.75;
-    border:1px solid var(--line);
-    padding:6px 12px;
-    border-radius:100px;
+  #widget {
+    width: 100%;
+    max-width: 420px;
+    height: 100vh;
+    max-height: 780px;
+    margin: auto;
+    background: var(--paper);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(20, 33, 61, 0.18);
+    border-radius: 18px;
+    overflow: hidden;
   }
 
-  .hero{
-    max-width:1180px;
-    margin:0 auto;
-    padding:9vh 6vw 4vh;
-    display:grid;
-    grid-template-columns:1.05fr 1fr;
-    gap:64px;
-    align-items:center;
-  }
-  .hero h1{
-    font-family:'Fraunces', serif;
-    font-weight:500;
-    font-size:clamp(34px, 4.6vw, 58px);
-    line-height:1.06;
-    margin:0 0 22px;
-    letter-spacing:-0.01em;
-  }
-  .hero h1 em{
-    font-style:italic;
-    color:var(--green);
-  }
-  .hero p{
-    font-size:17px;
-    line-height:1.6;
-    color:rgba(20,32,27,0.72);
-    max-width:46ch;
-    margin:0 0 30px;
-  }
-  .stat-row{
-    display:flex;
-    gap:32px;
-    padding-top:22px;
-    border-top:1px solid var(--line);
-  }
-  .stat{ font-family:'IBM Plex Mono', monospace; }
-  .stat b{
-    display:block;
-    font-size:22px;
-    color:var(--ink);
-  }
-  .stat span{
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:0.08em;
-    color:rgba(20,32,27,0.55);
+  #header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 20px 22px 18px;
+    position: relative;
   }
 
-  .widget{
-    background:var(--ink);
-    border-radius:22px;
-    padding:22px;
-    box-shadow: 0 30px 60px -20px rgba(20,32,27,0.35);
-    display:flex;
-    flex-direction:column;
-    height:560px;
-  }
-  .widget-head{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:4px 6px 16px;
-    border-bottom:1px solid rgba(246,242,234,0.12);
-    margin-bottom:14px;
-  }
-  .dot{
-    width:9px; height:9px; border-radius:50%;
-    background:#4CAF7D;
-    box-shadow:0 0 0 3px rgba(76,175,125,0.18);
-  }
-  .widget-head-text b{
-    color:var(--paper);
-    font-size:14px;
-    display:block;
-    font-family:'Inter';
-  }
-  .widget-head-text span{
-    color:rgba(246,242,234,0.5);
-    font-size:12px;
+  #agency-name {
+    font-family: 'Fraunces', serif;
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    margin: 0;
   }
 
-  .messages{
-    flex:1;
-    overflow-y:auto;
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-    padding:4px 2px;
-  }
-  .messages::-webkit-scrollbar{ width:5px; }
-  .messages::-webkit-scrollbar-thumb{ background:rgba(246,242,234,0.15); border-radius:10px; }
-
-  .msg{
-    max-width:82%;
-    font-size:14px;
-    line-height:1.5;
-    white-space:pre-wrap;
-    animation: rise 0.28s ease both;
-  }
-  @keyframes rise{
-    from{ opacity:0; transform:translateY(6px); }
-    to{ opacity:1; transform:translateY(0); }
+  #agency-sub {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    font-size: 12.5px;
+    color: #C7CDDB;
   }
 
-  .msg.user{
-    align-self:flex-end;
-    background:rgba(246,242,234,0.1);
-    color:var(--paper);
-    padding:11px 14px;
-    border-radius:14px 14px 4px 14px;
+  .live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--available);
+    box-shadow: 0 0 0 3px rgba(62, 124, 89, 0.25);
   }
 
-  .msg.bot{
-    align-self:flex-start;
-    position:relative;
-    background:var(--paper);
-    color:var(--ink);
-    padding:12px 16px 12px 22px;
-    border-radius:4px 12px 12px 4px;
-  }
-  .msg.bot::before{
-    content:"";
-    position:absolute;
-    left:8px; top:50%;
-    transform:translateY(-50%);
-    width:6px; height:6px;
-    border-radius:50%;
-    background:var(--ink);
-    box-shadow: 0 -9px 0 -3px rgba(20,32,27,0.25), 0 9px 0 -3px rgba(20,32,27,0.25);
-  }
-  .msg.bot::after{
-    content:"";
-    position:absolute;
-    left:-5px; top:50%;
-    transform:translateY(-50%);
-    width:10px; height:10px;
-    background:var(--ink);
-    border-radius:50%;
+  #messages {
+    flex: 1;
+    padding: 20px 18px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background:
+      radial-gradient(circle at 100% 0%, rgba(176, 141, 87, 0.06), transparent 40%),
+      var(--paper);
   }
 
-  .typing{
-    align-self:flex-start;
-    display:flex;
-    gap:4px;
-    padding:12px 16px;
-  }
-  .typing span{
-    width:6px; height:6px; border-radius:50%;
-    background:rgba(246,242,234,0.5);
-    animation: bounce 1.1s infinite ease-in-out;
-  }
-  .typing span:nth-child(2){ animation-delay:0.15s; }
-  .typing span:nth-child(3){ animation-delay:0.3s; }
-  @keyframes bounce{
-    0%,60%,100%{ transform:translateY(0); opacity:0.4; }
-    30%{ transform:translateY(-4px); opacity:1; }
+  .row { display: flex; }
+  .row.user { justify-content: flex-end; }
+  .row.bot { justify-content: flex-start; }
+
+  .bubble {
+    max-width: 78%;
+    padding: 11px 15px;
+    font-size: 14.5px;
+    line-height: 1.5;
+    animation: rise 0.25s ease-out;
   }
 
-  .composer{
-    display:flex;
-    gap:8px;
-    margin-top:14px;
-    padding-top:14px;
-    border-top:1px solid rgba(246,242,234,0.12);
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
   }
-  .composer input{
-    flex:1;
-    background:rgba(246,242,234,0.08);
-    border:1px solid rgba(246,242,234,0.14);
-    border-radius:10px;
-    padding:12px 14px;
-    color:var(--paper);
-    font-family:'Inter';
-    font-size:14px;
-    outline:none;
-  }
-  .composer input::placeholder{ color:rgba(246,242,234,0.4); }
-  .composer input:focus{ border-color:var(--brass); }
-  .composer button{
-    background:var(--brass);
-    color:var(--ink);
-    border:none;
-    border-radius:10px;
-    padding:0 18px;
-    font-family:'Inter';
-    font-weight:600;
-    font-size:14px;
-    cursor:pointer;
-    transition:background 0.15s ease;
-  }
-  .composer button:hover{ background:var(--brass-soft); }
-  .composer button:focus-visible, .composer input:focus-visible{
-    outline:2px solid var(--brass);
-    outline-offset:2px;
-  }
-  .composer button:disabled{ opacity:0.5; cursor:not-allowed; }
 
-  .widget-foot{
-    text-align:center;
-    font-family:'IBM Plex Mono', monospace;
-    font-size:10.5px;
-    letter-spacing:0.08em;
-    text-transform:uppercase;
-    color:rgba(20,32,27,0.45);
-    margin-top:16px;
+  .bot .bubble {
+    background: #fff;
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--brass);
+    border-radius: 4px 14px 14px 14px;
   }
-  .widget-foot b{ color:var(--brass); font-weight:500; }
 
-  @media (max-width: 880px){
-    .hero{ grid-template-columns:1fr; padding-top:6vh; gap:40px; }
-    .widget{ height:500px; }
+  .user .bubble {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 14px 4px 14px 14px;
   }
+
+  .typing-row { display: flex; align-items: center; gap: 8px; padding: 4px 4px; }
+  .key-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--brass-dark);
+    animation: turn-key 1.1s ease-in-out infinite;
+    transform-origin: 65% 50%;
+  }
+  @keyframes turn-key {
+    0%, 100% { transform: rotate(-18deg); }
+    50% { transform: rotate(18deg); }
+  }
+  .typing-label { font-size: 12.5px; color: var(--slate); }
+
+  #input-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    background: #fff;
+    border-top: 1px solid var(--line);
+  }
+
+  #userInput {
+    flex: 1;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    border-radius: 999px;
+    padding: 11px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14.5px;
+    color: var(--ink);
+    outline: none;
+  }
+
+  #userInput:focus {
+    border-color: var(--brass);
+    box-shadow: 0 0 0 3px rgba(176, 141, 87, 0.15);
+  }
+
+  #sendBtn {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    border: none;
+    border-radius: 50%;
+    background: var(--brass);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  #sendBtn:hover { background: var(--brass-dark); }
+  #sendBtn:active { transform: scale(0.94); }
+
+  #credit {
+    text-align: center;
+    font-size: 10.5px;
+    letter-spacing: 0.3px;
+    color: var(--slate);
+    padding: 8px 0 12px;
+    background: #fff;
+  }
+  #credit b { color: var(--ink); font-weight: 600; }
+
+  #messages::-webkit-scrollbar { width: 5px; }
+  #messages::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
 </style>
 </head>
 <body>
 
-  <div class="topbar">
-    <div class="brand">Front Desk <span>AI</span></div>
-    <div class="eyebrow">Powered by Front Desk AI — Demo</div>
+<div id="widget">
+
+  <div id="header">
+    <p id="agency-name">Sunrise Realty</p>
+    <div id="agency-sub">
+      <span class="live-dot"></span>
+      <span>Front desk assistant &middot; usually replies instantly</span>
+    </div>
   </div>
 
-  <main class="hero">
-    <div>
-      <h1>Your listings,<br><em>answering themselves.</em></h1>
-      <p>Front Desk AI qualifies buyers, matches properties, and books viewings the moment a lead lands — day or night. Try it below with a real search, the way a customer would.</p>
-      <div class="stat-row">
-        <div class="stat"><b>24/7</b><span>Always answering</span></div>
-        <div class="stat"><b>0</b><span>Repeated questions</span></div>
-        <div class="stat"><b>3-day</b><span>Auto follow-up</span></div>
-      </div>
-    </div>
+  <div id="messages"></div>
 
-    <div class="widget">
-      <div class="widget-head">
-        <span class="dot"></span>
-        <div class="widget-head-text">
-          <b>Front Desk AI</b>
-          <span>Typically replies in seconds</span>
-        </div>
-      </div>
+  <div id="input-bar">
+    <input id="userInput" type="text" placeholder="Ask about a property..." />
+    <button id="sendBtn" onclick="sendMessage()" aria-label="Send message">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path d="M4 12L20 4L14 20L11 13L4 12Z" fill="currentColor"/>
+      </svg>
+    </button>
+  </div>
 
-      <div class="messages" id="messages">
-        <div class="msg bot">Welcome — I can help you find a property, book a viewing, or answer any question about our listings. What are you looking for today?</div>
-      </div>
+  <div id="credit">⚡ Powered by <b>Front Desk AI</b></div>
 
-      <div class="composer">
-        <input id="input" type="text" placeholder="e.g. 3 bedroom flat in Lekki under ₦100m" autocomplete="off">
-        <button id="send">Send</button>
-      </div>
-
-      <div class="widget-foot">Powered by <b>Front Desk AI</b></div>
-    </div>
-  </main>
+</div>
 
 <script>
-  // ⚠️ REQUIRED: paste your deployed Apps Script Web App URL here
-  const API_URL = "https://script.google.com/macros/s/AKfycbyKxHZpfUmo1qlshnpGObvKW3rNFRE2LGUXxM7Bg85weaXH6bd7zbPFjOlofIWlIBMS/exec";
+  const AGENCY_NAME = "Sunrise Realty";
+  const BACKEND_URL = "https://script.google.com/macros/s/AKfycbz1TS1soQaLD4j9J7XRpdchiQwsNe0IV7eSzKvZHJhwr-U09HAfjDI4Ky1_Vw5I5bT5/exec";
 
-  const userId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random());
+  document.getElementById('agency-name').textContent = AGENCY_NAME;
 
-  const messagesEl = document.getElementById('messages');
-  const inputEl = document.getElementById('input');
-  const sendBtn = document.getElementById('send');
+  const sessionId = "sess_" + Math.random().toString(36).substring(2, 12);
+  const messagesEl = document.getElementById("messages");
+  const inputEl = document.getElementById("userInput");
 
-  function addMessage(text, sender){
-    const div = document.createElement('div');
-    div.className = 'msg ' + sender;
-    div.textContent = text;
-    messagesEl.appendChild(div);
+  function addMessage(text, sender) {
+    const row = document.createElement("div");
+    row.className = "row " + sender;
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    bubble.textContent = text;
+    row.appendChild(bubble);
+    messagesEl.appendChild(row);
     messagesEl.scrollTop = messagesEl.scrollHeight;
+    return row;
   }
 
-  function showTyping(){
-    const div = document.createElement('div');
-    div.className = 'typing';
-    div.id = 'typing-indicator';
-    div.innerHTML = '<span></span><span></span><span></span>';
-    messagesEl.appendChild(div);
+  function addTypingIndicator() {
+    const row = document.createElement("div");
+    row.className = "row bot";
+    row.innerHTML = `
+      <div class="bubble typing-row">
+        <svg class="key-icon" viewBox="0 0 24 24" fill="none">
+          <circle cx="8" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 12H21M17 12V16M21 12V15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span class="typing-label">Checking listings...</span>
+      </div>`;
+    messagesEl.appendChild(row);
     messagesEl.scrollTop = messagesEl.scrollHeight;
+    return row;
   }
 
-  function hideTyping(){
-    const el = document.getElementById('typing-indicator');
-    if(el) el.remove();
-  }
-
-  async function sendMessage(){
+  async function sendMessage() {
     const text = inputEl.value.trim();
-    if(!text) return;
+    if (!text) return;
+    addMessage(text, "user");
+    inputEl.value = "";
 
-    if(API_URL.indexOf('PASTE_YOUR') === 0){
-      addMessage('Demo not connected yet — paste your Apps Script Web App URL into API_URL in this file.', 'bot');
-      return;
-    }
+    const typingRow = addTypingIndicator();
 
-    addMessage(text, 'user');
-    inputEl.value = '';
-    sendBtn.disabled = true;
-    showTyping();
-
-    try{
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ userId: userId, message: text })
+    try {
+      const res = await fetch(BACKEND_URL, {
+        method: "POST",
+        body: JSON.stringify({ sessionId, message: text })
       });
       const data = await res.json();
-      hideTyping();
-      addMessage(data.response || "Sorry, I didn't catch that — could you try again?", 'bot');
-    }catch(err){
-      hideTyping();
-      addMessage("I'm having trouble connecting right now. Please try again in a moment.", 'bot');
-    }finally{
-      sendBtn.disabled = false;
-      inputEl.focus();
+      typingRow.remove();
+      addMessage(data.reply, "bot");
+    } catch (err) {
+      typingRow.remove();
+      addMessage("Sorry, something went wrong. Please try again in a moment.", "bot");
     }
   }
 
-  sendBtn.addEventListener('click', sendMessage);
-  inputEl.addEventListener('keydown', (e) => {
-    if(e.key === 'Enter') sendMessage();
+  inputEl.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") sendMessage();
   });
+
+  addMessage(`Hi! 👋 Welcome to ${AGENCY_NAME}. Tell me what kind of property you're looking for and I'll help you book a viewing.`, "bot");
 </script>
 
 </body>
-  </html>
+</html>
