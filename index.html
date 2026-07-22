@@ -216,7 +216,8 @@
 </div>
 
 <script>
-  const AGENCY_NAME = "Sunrise Realty";
+  // ⚠️ Set these two per agency you deploy this for
+  const AGENCY_NAME = "Elite Realty";
   const BACKEND_URL = "https://script.google.com/macros/s/AKfycbz1TS1soQaLD4j9J7XRpdchiQwsNe0IV7eSzKvZHJhwr-U09HAfjDI4Ky1_Vw5I5bT5/exec";
 
   document.getElementById('agency-name').textContent = AGENCY_NAME;
@@ -271,7 +272,8 @@
       addMessage(data.reply, "bot");
     } catch (err) {
       typingRow.remove();
-      addMessage("Sorry, something went wrong. Please try again in a moment.", "bot");
+      // TEMP DEBUG - shows the real error so we can diagnose the intermittent failures
+      addMessage("DEBUG - Frontend error: " + err.message, "bot");
     }
   }
 
@@ -279,8 +281,9 @@
     if (e.key === "Enter") sendMessage();
   });
 
+  // Greet on load
   addMessage(`Hi! 👋 Welcome to ${AGENCY_NAME}. Tell me what kind of property you're looking for and I'll help you book a viewing.`, "bot");
 </script>
 
 </body>
-</html>
+  </html>
